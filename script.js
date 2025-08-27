@@ -1017,15 +1017,19 @@ async function resetStudyProgress() {
 
 /* ---------- Произношение ---------- */
 function pronounceWord(word) {
-  try {
-    const u = new SpeechSynthesisUtterance(word);
-    u.lang = "en-US";
-    u.volume = 1.0;
-    speechSynthesis.speak(u);
-  } catch (e) {
-    console.error("Pronounce word error:", e);
-    showNotification("Ошибка произношения", "error");
-  }
+    if (!window.speechSynthesis) {
+        showNotification("Произношение не поддерживается браузером", "error");
+        return;
+    }
+    try {
+        const u = new SpeechSynthesisUtterance(word);
+        u.lang = "en-US";
+        u.volume = 1.0;
+        speechSynthesis.speak(u);
+    } catch (e) {
+        console.error("Pronounce word error:", e);
+        showNotification("Ошибка произношения: " + e.message, "error");
+    }
 }
 
 /* ---------- Quiz (викторина) ---------- */
