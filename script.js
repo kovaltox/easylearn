@@ -668,18 +668,6 @@ async function handleExcelUpload(event) {
         const category = String(row.category || "uncategorized").trim();
         if (!english || !russian) continue;
 
-        // Проверка на существование слова
-        const exists = userWords.some(
-          (w) =>
-            w.englishLower === english.toLowerCase() ||
-            w.russianLower === russian.toLowerCase()
-        );
-
-        if (exists) {
-          console.log(`Слово "${english}" уже существует, пропускаем.`);
-          continue;
-        }
-
         const payload = {
           english,
           russian,
@@ -693,8 +681,6 @@ async function handleExcelUpload(event) {
           easeFactor: 2.5,
           repetitions: 0,
           lastReviewed: null,
-          englishLower: english.toLowerCase(),
-          russianLower: russian.toLowerCase(),
         };
 
         try {
@@ -1332,9 +1318,6 @@ async function aiCheckTask(originalText, studentTranslation) {
 //   translationEl.classList.add("show");
 // });
 
-
-
-
 elements.addWordBtn.addEventListener("click", addWord);
 
 async function addWord() {
@@ -1347,9 +1330,7 @@ async function addWord() {
   }
 
   // Проверка дубля (по userWords)
-  const exists = userWords.some(w => 
-    (w.english || "").toLowerCase() === eng
-  );
+  const exists = userWords.some((w) => (w.english || "").toLowerCase() === eng);
 
   if (exists) {
     showNotification("Такое слово уже есть!", "error");
@@ -1364,7 +1345,7 @@ async function addWord() {
       learned: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       englishLower: eng, // для будущих проверок
-      russianLower: rus
+      russianLower: rus,
     });
 
     userWords.push({ id: ref.id, english: eng, russian: rus, learned: false });
@@ -1378,3 +1359,4 @@ async function addWord() {
   elements.englishWord.value = "";
   elements.russianWord.value = "";
 }
+
