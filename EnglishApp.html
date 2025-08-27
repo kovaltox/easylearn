@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WordMaster</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- XLSX для импорта Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Font Awesome (только CSS версия) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <span class="logo-icon">W</span>
+          <span>WordMaster</span>
+        </div>
+        <div class="user-profile">
+          <span class="avatar">U</span>
+          <span>Ученик</span>
+        </div>
+      </header>
+
+      <!-- Прогресс -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <h2 class="progress-title">Мой прогресс</h2>
+        </div>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-icon streak"></div>
+            <div class="stat-value" id="streak-value">0</div>
+            <div class="stat-label">Стрик</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon words"></div>
+            <div class="stat-value" id="words-count">0</div>
+            <div class="stat-label">Слов изучено</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon xp"></div>
+            <div class="stat-value" id="xp-value">0</div>
+            <div class="stat-label">Опыта</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon progress"></div>
+            <div class="stat-value" id="progress-value">0%</div>
+            <div class="stat-label">Прогресс</div>
+            <div class="progress-bar-container">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладки -->
+      <div class="tabs">
+        <div class="tab active" data-tab="study">Изучение</div>
+        <div class="tab" data-tab="quiz">Викторина</div>
+        <div class="tab" data-tab="tasks">Задания</div>
+        <div class="tab" data-tab="words">Мои слова</div>
+        <div class="tab" data-tab="add">Добавить слово</div>
+      </div>
+
+      <!-- Изучение -->
+      <div id="study-tab" class="tab-content study-section active">
+        <h2>Система изучения слов</h2>
+        <div class="study-controls">
+          <button class="btn btn-primary" id="start-study">
+            Начать изучение
+          </button>
+          <button class="btn btn-outline" id="repeat-any">
+            Повторить любые слова
+          </button>
+          <button class="btn btn-danger" id="reset-study">
+            Сбросить прогресс
+          </button>
+        </div>
+        <select id="study-filter">
+          <option value="all">Все слова</option>
+          <option value="unlearned">Только не изученные</option>
+          <option value="categories">По категориям</option>
+        </select>
+        <div id="study-container" class="study-container">
+          <div class="study-card">
+            <div id="study-info">Готовимся к изучению...</div>
+            <div class="study-word-container">
+              <div id="study-word"></div>
+              <button
+                id="pronounce-word"
+                class="speak-word-btn"
+                aria-label="Произнести слово"
+              ></button>
+            </div>
+            <div id="study-translation" class="study-translation"></div>
+            <div class="study-example-container">
+              <div id="study-example" class="study-example"></div>
+              <button
+                id="pronounce-example"
+                class="speak-example-btn"
+                aria-label="Произнести пример"
+              ></button>
+            </div>
+            <div
+              id="study-example-translation"
+              class="study-example-translation"
+            ></div>
+            <div class="study-actions-row">
+              <button class="btn btn-outline" id="show-translation">
+                Показать перевод
+              </button>
+              <button class="btn btn-outline" id="show-example">
+                Показать пример
+              </button>
+              <button class="btn btn-outline" id="show-example-translation">
+                Перевести пример
+              </button>
+            </div>
+            <div class="study-actions-row">
+              <button class="btn btn-success" id="know-word">
+                Знаю это слово
+              </button>
+              <button class="btn btn-danger" id="dont-know">Не знаю</button>
+            </div>
+          </div>
+          <div id="study-progress-text">0/0 слов</div>
+          <div class="progress-bar-container">
+            <div id="study-progress-bar" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Викторина -->
+      <div id="quiz-tab" class="tab-content study-section">
+        <h2>Викторина</h2>
+        <div class="study-controls">
+          <button class="btn btn-primary" id="new-quiz">Новые слова</button>
+          <button class="btn btn-outline" id="repeat-any-quiz">
+            Повторить любые слова
+          </button>
+        </div>
+        <div class="study-container">
+          <div class="study-card">
+            <div id="quiz-info">Загрузка...</div>
+            <div class="study-word-container">
+              <div id="quiz-word" class="quiz-word"></div>
+              <button
+                id="pronounce-quiz-word"
+                class="speak-word-btn"
+                aria-label="Произнести слово"
+              ></button>
+            </div>
+            <div id="quiz-options" class="quiz-options">
+              <div class="quiz-option">Вариант 1</div>
+              <div class="quiz-option">Вариант 2</div>
+              <div class="quiz-option">Вариант 3</div>
+              <div class="quiz-option">Вариант 4</div>
+            </div>
+            <div class="study-actions-row">
+              <button class="btn btn-primary" id="check-answer">
+                Проверить
+              </button>
+              <button class="btn btn-outline" id="pronounce-quiz-word-btn">
+                Произнести
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Задания -->
+      <div id="tasks-tab" class="tab-content task-section">
+        <h2>Задания</h2>
+        <div class="study-controls">
+          <button class="btn btn-primary" id="generate-task">
+            Сгенерировать задание
+          </button>
+          <select id="task-type">
+            <option value="dialogue">Диалог</option>
+            <option value="story">Рассказ</option>
+          </select>
+        </div>
+        <div id="task-container" class="task-container">
+          <div id="task-text" class="task-text">
+            Нажмите "Сгенерировать задание" для начала.
+          </div>
+          <textarea
+            id="task-input"
+            class="task-input"
+            placeholder="Ваш ответ..."
+          ></textarea>
+          <div id="task-info"></div>
+          <div class="study-actions-row">
+            <button class="btn btn-primary" id="check-task">Проверить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Мои слова -->
+      <div id="words-tab" class="tab-content words-section">
+        <h2>Мои слова</h2>
+        <div class="study-controls">
+          <select id="sort-words">
+            <option value="added-desc">По дате добавления (новые)</option>
+            <option value="added-asc">По дате добавления (старые)</option>
+            <option value="alpha-asc">По алфавиту (A-Z)</option>
+            <option value="alpha-desc">По алфавиту (Z-A)</option>
+            <option value="learned">Изученные</option>
+            <option value="unlearned">Неизученные</option>
+            <option value="review-soon">Скоро повтор</option>
+          </select>
+          <input
+            type="text"
+            id="search-words"
+            class="form-control"
+            placeholder="Поиск слов..."
+          />
+        </div>
+        <div id="words-info"></div>
+        <div id="words-list" class="words-list"></div>
+      </div>
+
+      <!-- Добавить слово -->
+      <div id="add-tab" class="tab-content add-section">
+        <h2>Добавить новое слово</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="english-word">Английское слово*</label>
+            <input
+              type="text"
+              id="english-word"
+              class="form-control"
+              placeholder="Введите слово"
+            />
+          </div>
+          <div class="form-group">
+            <label for="russian-word">Русский перевод*</label>
+            <input
+              type="text"
+              id="russian-word"
+              class="form-control"
+              placeholder="Введите перевод"
+            />
+          </div>
+          <div class="form-group">
+            <label for="word-category">Категория</label>
+            <select id="word-category" class="form-control">
+              <option value="">Выберите категорию</option>
+              <option value="food">Еда</option>
+              <option value="travel">Путешествия</option>
+              <option value="work">Работа</option>
+              <option value="home">Дом</option>
+              <option value="new">+ Создать новую</option>
+            </select>
+            <input
+              type="text"
+              id="new-category"
+              class="form-control"
+              placeholder="Новая категория"
+              style="display: none"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary" id="add-word-btn">
+            Добавить слово
+          </button>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-outline" id="excel-import-btn">
+            Импорт слов из Excel
+          </button>
+          <input
+            type="file"
+            id="excel-upload"
+            accept=".xlsx,.xls"
+            style="display: none"
+          />
+        </div>
+      </div>
+
+      <!-- Уведомления -->
+      <div class="notification">
+        <span id="notification-text">Отлично!</span>
+      </div>
+    </div>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975c89dfce415925',t:'MTc1NjMwNzg3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
