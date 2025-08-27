@@ -1017,18 +1017,72 @@ async function resetStudyProgress() {
 
 /* ---------- Произношение ---------- */
 function pronounceWord(word) {
+    console.log("Попытка произнести слово:", word);
     if (!window.speechSynthesis) {
         showNotification("Произношение не поддерживается браузером", "error");
+        console.error("SpeechSynthesis API отсутствует");
+        return;
+    }
+    if (!word || typeof word !== "string" || word.trim() === "") {
+        showNotification("Слово пустое или некорректное", "error");
+        console.error("Некорректное слово:", word);
         return;
     }
     try {
+        const voices = speechSynthesis.getVoices();
+        console.log("Доступные голоса:", voices);
+        const enVoice = voices.find(v => v.lang === "en-US");
+        if (!enVoice) {
+            showNotification("Голос для en-US не найден", "error");
+            console.error("Голос en-US не найден, доступные голоса:", voices);
+            return;
+        }
         const u = new SpeechSynthesisUtterance(word);
         u.lang = "en-US";
         u.volume = 1.0;
+        u.voice = enVoice;
+        console.log("Utterance объект:", u);
         speechSynthesis.speak(u);
+        console.log("Произношение инициировано для:", word);
     } catch (e) {
         console.error("Pronounce word error:", e);
         showNotification("Ошибка произношения: " + e.message, "error");
+    }
+}
+
+function pronounceExample() {
+    const w = currentStudyWords[currentStudyIndex];
+    const sentence = w?.exampleSentence || w?.example;
+    console.log("Попытка произнести пример:", sentence);
+    if (!window.speechSynthesis) {
+        showNotification("Произношение не поддерживается браузером", "error");
+        console.error("SpeechSynthesis API отсутствует");
+        return;
+    }
+    if (!sentence || typeof sentence !== "string" || sentence.trim() === "") {
+        showNotification("Пример пустой или некорректный", "error");
+        console.error("Некорректный пример:", sentence);
+        return;
+    }
+    try {
+        const voices = speechSynthesis.getVoices();
+        console.log("Доступные голоса:", voices);
+        const enVoice = voices.find(v => v.lang === "en-US");
+        if (!enVoice) {
+            showNotification("Голос для en-US не найден", "error");
+            console.error("Голос en-US не найден, доступные голоса:", voices);
+            return;
+        }
+        const u = new SpeechSynthesisUtterance(sentence);
+        u.lang = "en-US";
+        u.volume = 1.0;
+        u.voice = enVoice;
+        console.log("Utterance объект:", u);
+        speechSynthesis.speak(u);
+        console.log("Произношение инициировано для:", sentence);
+    } catch (e) {
+        console.error("Pronounce example error:", e);
+        showNotification("Ошибка произношения примера: " + e.message, "error");
     }
 }
 
