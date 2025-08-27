@@ -71,7 +71,7 @@
         <div class="tab active" data-tab="study">Изучение</div>
         <div class="tab" data-tab="quiz">Викторина</div>
         <div class="tab" data-tab="tasks">Задания</div>
-        <div class="tab" data-tab="words">Мои слова</div>
+        <div class="tab" data-tab="words">Словарь</div>
         <div class="tab" data-tab="add">Добавить слово</div>
       </div>
 
@@ -211,7 +211,7 @@
 
       <!-- Мои слова -->
       <div id="words-tab" class="tab-content words-section">
-        <h2>Мои слова</h2>
+        <h2>Словарь</h2>
         <div class="study-controls">
           <select id="sort-words">
             <option value="added-desc">По дате добавления (новые)</option>
@@ -235,10 +235,9 @@
 
       <!-- Добавить слово -->
       <div id="add-tab" class="tab-content add-section">
-        <h2>Добавить новое слово</h2>
+        <h2>Новое слово</h2>
         <div class="form-grid">
           <div class="form-group">
-            <label for="english-word">Английское слово*</label>
             <input
               type="text"
               id="english-word"
@@ -247,7 +246,6 @@
             />
           </div>
           <div class="form-group">
-            <label for="russian-word">Русский перевод*</label>
             <input
               type="text"
               id="russian-word"
@@ -256,9 +254,8 @@
             />
           </div>
           <div class="form-group">
-            <label for="word-category">Категория</label>
             <select id="word-category" class="form-control">
-              <option value="">Выберите категорию</option>
+              <option value="">Категория</option>
               <option value="food">Еда</option>
               <option value="travel">Путешествия</option>
               <option value="work">Работа</option>
@@ -274,15 +271,17 @@
             />
           </div>
         </div>
-        <div class="form-group">
-          <button class="btn btn-primary" id="add-word-btn">
-            Добавить слово
-          </button>
-        </div>
-        <div class="form-group">
-          <button class="btn btn-outline" id="excel-import-btn">
-            Импорт слов из Excel
-          </button>
+        <div class="btn-imp">
+          <div class="form-group">
+            <button class="btn btn-primary" id="add-word-btn">
+              Добавить слово
+            </button>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-outline" id="excel-import-btn">
+              Импорт слов из Excel
+            </button>
+          </div>
           <input
             type="file"
             id="excel-upload"

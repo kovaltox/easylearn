@@ -1018,116 +1018,128 @@ async function resetStudyProgress() {
 /* ---------- Произношение ---------- */
 let availableVoices = [];
 window.speechSynthesis.onvoiceschanged = () => {
-    availableVoices = speechSynthesis.getVoices();
-    console.log("Голоса загружены:", availableVoices);
+  availableVoices = speechSynthesis.getVoices();
+  console.log("Голоса загружены:", availableVoices);
 };
 
 function pronounceWord(word) {
-    console.log("Попытка произнести слово:", word);
-    if (!window.speechSynthesis) {
-        showNotification("Произношение не поддерживается браузером. Попробуйте другой браузер.", "error");
-        console.error("SpeechSynthesis API отсутствует. Браузер:", navigator.userAgent);
-        return;
-    }
-    if (!word || typeof word !== "string" || word.trim() === "") {
-        showNotification("Слово пустое или некорректное", "error");
-        console.error("Некорректное слово:", word);
-        return;
-    }
-    
-    const tryPronounce = () => {
-        const voices = availableVoices;
-        console.log("Доступные голоса:", voices);
-        const enVoice = voices.find(v => v.lang.startsWith("en")) || voices[0];
-        if (!enVoice) {
-            showNotification(
-                "Голос не найден. Установите голосовой пакет для английского языка в настройках устройства.",
-                "error"
-            );
-            console.error("Голос не найден, доступные голоса:", voices);
-            return;
-        }
-        try {
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = enVoice.lang.startsWith("en") ? "en-US" : enVoice.lang;
-            utterance.volume = 1.0;
-            utterance.rate = 0.9; // Добавлено из предложенного кода
-            utterance.pitch = 1;   // Добавлено из предложенного кода
-            utterance.voice = enVoice;
-            console.log("Utterance объект:", utterance);
-            speechSynthesis.speak(utterance);
-            console.log("Произношение инициировано для:", word);
-        } catch (e) {
-            console.error("Pronounce word error:", e);
-            showNotification("Ошибка произношения: " + e.message, "error");
-        }
-    };
+  console.log("Попытка произнести слово:", word);
+  if (!window.speechSynthesis) {
+    showNotification(
+      "Произношение не поддерживается браузером. Попробуйте другой браузер.",
+      "error"
+    );
+    console.error(
+      "SpeechSynthesis API отсутствует. Браузер:",
+      navigator.userAgent
+    );
+    return;
+  }
+  if (!word || typeof word !== "string" || word.trim() === "") {
+    showNotification("Слово пустое или некорректное", "error");
+    console.error("Некорректное слово:", word);
+    return;
+  }
 
-    if (availableVoices.length === 0) {
-        console.log("Ожидание загрузки голосов...");
-        window.speechSynthesis.onvoiceschanged = () => {
-            availableVoices = speechSynthesis.getVoices();
-            console.log("Голоса загружены:", availableVoices);
-            tryPronounce();
-        };
-    } else {
-        tryPronounce();
+  const tryPronounce = () => {
+    const voices = availableVoices;
+    console.log("Доступные голоса:", voices);
+    const enVoice = voices.find((v) => v.lang.startsWith("en")) || voices[0];
+    if (!enVoice) {
+      showNotification(
+        "Голос не найден. Установите голосовой пакет для английского языка в настройках устройства.",
+        "error"
+      );
+      console.error("Голос не найден, доступные голоса:", voices);
+      return;
     }
+    try {
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = enVoice.lang.startsWith("en") ? "en-US" : enVoice.lang;
+      utterance.volume = 1.0;
+      utterance.rate = 0.9; // Добавлено из предложенного кода
+      utterance.pitch = 1; // Добавлено из предложенного кода
+      utterance.voice = enVoice;
+      console.log("Utterance объект:", utterance);
+      speechSynthesis.speak(utterance);
+      console.log("Произношение инициировано для:", word);
+    } catch (e) {
+      console.error("Pronounce word error:", e);
+      showNotification("Ошибка произношения: " + e.message, "error");
+    }
+  };
+
+  if (availableVoices.length === 0) {
+    console.log("Ожидание загрузки голосов...");
+    window.speechSynthesis.onvoiceschanged = () => {
+      availableVoices = speechSynthesis.getVoices();
+      console.log("Голоса загружены:", availableVoices);
+      tryPronounce();
+    };
+  } else {
+    tryPronounce();
+  }
 }
 
 function pronounceExample() {
-    const w = currentStudyWords[currentStudyIndex];
-    const sentence = w?.exampleSentence || w?.example;
-    console.log("Попытка произнести пример:", sentence);
-    if (!window.speechSynthesis) {
-        showNotification("Произношение не поддерживается браузером. Попробуйте другой браузер.", "error");
-        console.error("SpeechSynthesis API отсутствует. Браузер:", navigator.userAgent);
-        return;
-    }
-    if (!sentence || typeof sentence !== "string" || sentence.trim() === "") {
-        showNotification("Пример пустой или некорректный", "error");
-        console.error("Некорректный пример:", sentence);
-        return;
-    }
-    
-    const tryPronounce = () => {
-        const voices = availableVoices;
-        console.log("Доступные голоса:", voices);
-        const enVoice = voices.find(v => v.lang.startsWith("en")) || voices[0];
-        if (!enVoice) {
-            showNotification(
-                "Голос не найден. Установите голосовой пакет для английского языка в настройках устройства.",
-                "error"
-            );
-            console.error("Голос не найден, доступные голоса:", voices);
-            return;
-        }
-        try {
-            const utterance = new SpeechSynthesisUtterance(sentence);
-            utterance.lang = enVoice.lang.startsWith("en") ? "en-US" : enVoice.lang;
-            utterance.volume = 1.0;
-            utterance.rate = 0.9;
-            utterance.pitch = 1;
-            utterance.voice = enVoice;
-            console.log("Utterance объект:", utterance);
-            speechSynthesis.speak(utterance);
-            console.log("Произношение инициировано для:", sentence);
-        } catch (e) {
-            console.error("Pronounce example error:", e);
-            showNotification("Ошибка произношения примера: " + e.message, "error");
-        }
-    };
+  const w = currentStudyWords[currentStudyIndex];
+  const sentence = w?.exampleSentence || w?.example;
+  console.log("Попытка произнести пример:", sentence);
+  if (!window.speechSynthesis) {
+    showNotification(
+      "Произношение не поддерживается браузером. Попробуйте другой браузер.",
+      "error"
+    );
+    console.error(
+      "SpeechSynthesis API отсутствует. Браузер:",
+      navigator.userAgent
+    );
+    return;
+  }
+  if (!sentence || typeof sentence !== "string" || sentence.trim() === "") {
+    showNotification("Пример пустой или некорректный", "error");
+    console.error("Некорректный пример:", sentence);
+    return;
+  }
 
-    if (availableVoices.length === 0) {
-        console.log("Ожидание загрузки голосов...");
-        window.speechSynthesis.onvoiceschanged = () => {
-            availableVoices = speechSynthesis.getVoices();
-            console.log("Голоса загружены:", availableVoices);
-            tryPronounce();
-        };
-    } else {
-        tryPronounce();
+  const tryPronounce = () => {
+    const voices = availableVoices;
+    console.log("Доступные голоса:", voices);
+    const enVoice = voices.find((v) => v.lang.startsWith("en")) || voices[0];
+    if (!enVoice) {
+      showNotification(
+        "Голос не найден. Установите голосовой пакет для английского языка в настройках устройства.",
+        "error"
+      );
+      console.error("Голос не найден, доступные голоса:", voices);
+      return;
     }
+    try {
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      utterance.lang = enVoice.lang.startsWith("en") ? "en-US" : enVoice.lang;
+      utterance.volume = 1.0;
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.voice = enVoice;
+      console.log("Utterance объект:", utterance);
+      speechSynthesis.speak(utterance);
+      console.log("Произношение инициировано для:", sentence);
+    } catch (e) {
+      console.error("Pronounce example error:", e);
+      showNotification("Ошибка произношения примера: " + e.message, "error");
+    }
+  };
+
+  if (availableVoices.length === 0) {
+    console.log("Ожидание загрузки голосов...");
+    window.speechSynthesis.onvoiceschanged = () => {
+      availableVoices = speechSynthesis.getVoices();
+      console.log("Голоса загружены:", availableVoices);
+      tryPronounce();
+    };
+  } else {
+    tryPronounce();
+  }
 }
 
 /* ---------- Quiz (викторина) ---------- */
@@ -1461,4 +1473,3 @@ async function addWord() {
   elements.englishWord.value = "";
   elements.russianWord.value = "";
 }
-

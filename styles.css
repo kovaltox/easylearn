@@ -570,10 +570,10 @@ header {
   gap: 0.25rem;
 }
 
-.form-group label {
-  font-size: 0.875rem;
-  color: #475569;
-  font-weight: 500;
+.btn-imp {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .form-control {
