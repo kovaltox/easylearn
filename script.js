@@ -1055,7 +1055,7 @@ function pronounceWord(word) {
     }
     try {
       const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = enVoice.lang.startsWith("en") ? "en-US" : enVoice.lang;
+      utterance.lang = enVoice.lang.startsWith("en") ? "en-GD" : enVoice.lang;
       utterance.volume = 1.0;
       utterance.rate = 0.9; // Добавлено из предложенного кода
       utterance.pitch = 1; // Добавлено из предложенного кода
