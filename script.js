@@ -1019,13 +1019,8 @@ async function resetStudyProgress() {
 function pronounceWord(word) {
     console.log("Попытка произнести слово:", word);
     if (!window.speechSynthesis) {
-        showNotification("Произношение не поддерживается браузером", "error");
-        console.error("SpeechSynthesis API отсутствует");
-        return;
-    }
-    if (!word || typeof word !== "string" || word.trim() === "") {
-        showNotification("Слово пустое или некорректное", "error");
-        console.error("Некорректное слово:", word);
+        showNotification("Произношение не поддерживается браузером. Проверьте настройки голоса в устройстве.", "error");
+        console.error("SpeechSynthesis API отсутствует. Браузер:", navigator.userAgent);
         return;
     }
     try {
@@ -1033,8 +1028,8 @@ function pronounceWord(word) {
         console.log("Доступные голоса:", voices);
         const enVoice = voices.find(v => v.lang === "en-US");
         if (!enVoice) {
-            showNotification("Голос для en-US не найден", "error");
-            console.error("Голос en-US не найден, доступные голоса:", voices);
+            showNotification("Голос для en-US не найден. Установите голосовой пакет.", "error");
+            console.error("Голоса:", voices);
             return;
         }
         const u = new SpeechSynthesisUtterance(word);
@@ -1043,7 +1038,6 @@ function pronounceWord(word) {
         u.voice = enVoice;
         console.log("Utterance объект:", u);
         speechSynthesis.speak(u);
-        console.log("Произношение инициировано для:", word);
     } catch (e) {
         console.error("Pronounce word error:", e);
         showNotification("Ошибка произношения: " + e.message, "error");
@@ -1055,13 +1049,12 @@ function pronounceExample() {
     const sentence = w?.exampleSentence || w?.example;
     console.log("Попытка произнести пример:", sentence);
     if (!window.speechSynthesis) {
-        showNotification("Произношение не поддерживается браузером", "error");
-        console.error("SpeechSynthesis API отсутствует");
+        showNotification("Произношение не поддерживается браузером. Проверьте настройки голоса в устройстве.", "error");
+        console.error("SpeechSynthesis API отсутствует. Браузер:", navigator.userAgent);
         return;
     }
     if (!sentence || typeof sentence !== "string" || sentence.trim() === "") {
         showNotification("Пример пустой или некорректный", "error");
-        console.error("Некорректный пример:", sentence);
         return;
     }
     try {
@@ -1069,8 +1062,8 @@ function pronounceExample() {
         console.log("Доступные голоса:", voices);
         const enVoice = voices.find(v => v.lang === "en-US");
         if (!enVoice) {
-            showNotification("Голос для en-US не найден", "error");
-            console.error("Голос en-US не найден, доступные голоса:", voices);
+            showNotification("Голос для en-US не найден. Установите голосовой пакет.", "error");
+            console.error("Голоса:", voices);
             return;
         }
         const u = new SpeechSynthesisUtterance(sentence);
@@ -1079,7 +1072,6 @@ function pronounceExample() {
         u.voice = enVoice;
         console.log("Utterance объект:", u);
         speechSynthesis.speak(u);
-        console.log("Произношение инициировано для:", sentence);
     } catch (e) {
         console.error("Pronounce example error:", e);
         showNotification("Ошибка произношения примера: " + e.message, "error");
