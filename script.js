@@ -851,7 +851,7 @@ function pronounceExample() {
   }
   try {
     const u = new SpeechSynthesisUtterance(sentence);
-    u.lang = "en-US";
+    u.lang = "en-GB";
     u.volume = 1.0;
     speechSynthesis.speak(u);
   } catch (e) {
